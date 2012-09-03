@@ -1,11 +1,7 @@
-local main_key = KEYS[1]
-local from = tonumber(ARGV[1])
-local to = tonumber(ARGV[2])
-local amount = tonumber(ARGV[3])
+local amount = tonumber(ARGV[1])
 local final_set = {}
 
-for counter = from, to do
-    local key = main_key .. ':' .. counter
+for _,key in pairs(KEYS) do
     local member_controller = {}
     local member_controller_count = 0
     repeat
