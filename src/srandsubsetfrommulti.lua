@@ -5,9 +5,20 @@ local amount = tonumber(ARGV[3])
 local final_set = {}
 
 for counter = from, to do
-  for k,v in pairs(redis.call('evalsha','bd8d94deaa1113ee0c1beae00bab6de0cc88be89',1,main_key .. counter,tostring(amount))) do
-     final_set[#final_set+1] = v
-  end
+    local key = main_key .. ':' .. counter
+    local member_controller = {}
+    local member_controller_count = 0
+    repeat
+        local candidate = redis.call('srandmember',key)
+        if not member_controller[candidate] then
+            member_controller[candidate] = true
+            member_controller_count = member_controller_count + 1
+        end
+    until member_controller_count == amount
+    
+    for k,_ in pairs(member_controller) do
+        final_set[#final_set+1] = k
+    end
 end
 
 return final_set
